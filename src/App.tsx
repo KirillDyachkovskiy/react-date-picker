@@ -1,6 +1,5 @@
-import { FC } from 'react'
-import './App.css'
+import { FC } from 'react';
 
-const App: FC = () => <div>Lol</div>
+const App: FC = () => <div>Lol</div>;
 
-export default App
+export default App;
