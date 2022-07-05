@@ -44,7 +44,7 @@
       },
       {
         "blankLine": "always",
-        "prev": ["const", "let", "var", "import"],
+        "prev": ["import"],
         "next": "*"
       },
       {
@@ -86,6 +86,7 @@
         "extensions": [".tsx", ".ts"]
       }
     ],
-    "react/react-in-jsx-scope": 0
+    "react/react-in-jsx-scope": 0,
+    "no-plusplus": 0
   }
 }
