@@ -1,7 +1,7 @@
 import { getYesterday } from './index';
 import { TWeekday } from '../types';
 
-const getMonthInfo = (month: number, year: number) => {
+const getMonthInfo = (year: number, month: number) => {
   const firstDay = new Date(year, month, 1);
 
   const prevMonthDays = getYesterday(firstDay).getDate();

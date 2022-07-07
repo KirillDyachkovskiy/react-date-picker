@@ -1,9 +1,8 @@
-import { Dispatch, FC, SetStateAction, useMemo } from 'react';
+import { Dispatch, FC, SetStateAction } from 'react';
 import WEEKDAYS from '../../constants/weekdays';
-import createMatrix from '../../utils/createMatrix';
-import { getMonthInfo } from '../../utils';
-import { TMonthMatrix, TMonthStatus, TWeekday } from '../../types';
+import { TMonthStatus, TWeekday } from '../../types';
 import s from './datePicker.module.scss';
+import { useMonthMatrix } from '../../hooks';
 
 interface IDateTable {
   day: number;
@@ -22,48 +21,9 @@ const DatePickerTable: FC<IDateTable> = ({
   setPrevMonth,
   setNextMonth,
 }) => {
-  const monthMatrix = useMemo<TMonthMatrix>(() => {
-    const { prevMonthDays, days, firstWeekday } = getMonthInfo(month, year);
+  const monthMatrix = useMonthMatrix(year, month);
 
-    const result = createMatrix(6, 7);
-    let iterateDay = 1;
-
-    const firstDayId = WEEKDAYS.indexOf(firstWeekday);
-
-    return result.map((week, weekId) => {
-      if (weekId === 0) {
-        return Array.from({ length: 7 }, (_, dayId) => {
-          if (dayId < firstDayId) {
-            return {
-              value: prevMonthDays - firstDayId + dayId + 1,
-              monthStatus: 'prev',
-            };
-          }
-
-          return {
-            value: iterateDay++,
-            monthStatus: 'this',
-          };
-        });
-      }
-
-      return week.map(() => {
-        if (iterateDay <= days) {
-          return {
-            value: iterateDay++,
-            monthStatus: 'this',
-          };
-        }
-
-        return {
-          value: iterateDay++ - days,
-          monthStatus: 'next',
-        };
-      });
-    });
-  }, [month, year]);
-
-  const selectNewDay = (newDay: number, monthStatus: TMonthStatus) => () => {
+  const onClick = (newDay: number, monthStatus: TMonthStatus) => () => {
     setDay(newDay);
     if (monthStatus === 'prev') {
       setPrevMonth();
@@ -95,7 +55,7 @@ const DatePickerTable: FC<IDateTable> = ({
                     ? s.month__day_active
                     : ''
                 } ${monthStatus !== 'this' ? s.month__day_blur : ''}`}
-                onClick={selectNewDay(value, monthStatus)}
+                onClick={onClick(value, monthStatus)}
               >
                 {value}
               </td>
