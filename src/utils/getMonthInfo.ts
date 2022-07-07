@@ -1,5 +1,5 @@
 import { getYesterday } from './index';
-import { TWeekday } from '../tyoes';
+import { TWeekday } from '../types';
 
 const getMonthInfo = (month: number, year: number) => {
   const firstDay = new Date(year, month, 1);

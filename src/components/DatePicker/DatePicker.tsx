@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from 'react';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
-import { getMonthInfo } from '../../utils';
-import { DateTable } from '../index';
+import DatePickerTable from './DataPickerTable';
+import s from './datePicker.module.scss';
 
 interface IDatePicker {
   currentDate: Date;
@@ -18,14 +18,27 @@ const DatePicker: FC<IDatePicker> = ({ currentDate }) => {
     return date.toLocaleString('default', { month: 'long', year: 'numeric' });
   }, [month, year]);
 
-  const setPrevMonth = () => setMonth((currMonth) => currMonth - 1);
-  const setNextMonth = () => setMonth((currMonth) => currMonth + 1);
+  const setPrevMonth = () => {
+    if (month !== 0) {
+      setMonth((currMonth) => currMonth - 1);
+    } else {
+      setYear((currYear) => currYear - 1);
+      setMonth(11);
+    }
+  };
 
-  const monthInfo = useMemo(() => getMonthInfo(month, year), [month, year]);
+  const setNextMonth = () => {
+    if (month !== 11) {
+      setMonth((currMonth) => currMonth + 1);
+    } else {
+      setYear((currYear) => currYear + 1);
+      setMonth(0);
+    }
+  };
 
   return (
-    <section>
-      <header>
+    <section className={s.datePicker}>
+      <header className={s.datePicker__header}>
         <p>{label}</p>
         <div>
           <IoIosArrowBack onClick={setPrevMonth} />
@@ -33,8 +46,12 @@ const DatePicker: FC<IDatePicker> = ({ currentDate }) => {
         </div>
       </header>
       <main>
-        <DateTable {...monthInfo} />
+        <DatePickerTable day={day} month={month} year={year} setDay={setDay} />
       </main>
+      <p>
+        <span>selected day: </span>
+        <span>{new Date(year, month, day).toLocaleString()}</span>
+      </p>
     </section>
   );
 };

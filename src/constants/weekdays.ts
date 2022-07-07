@@ -1,4 +1,4 @@
-import { TWeekday } from '../tyoes';
+import { TWeekday } from '../types';
 
 const WEEKDAYS: TWeekday[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 

@@ -1,0 +1,31 @@
+@import "src/styles/variables";
+
+.datePicker {
+  width: fit-content;
+
+  &__header {
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.month__day {
+  text-align: center;
+  cursor: pointer;
+
+  &_blur {
+    opacity: 0.5;
+  }
+
+  &_holiday {
+    color: $holiday-color;
+  }
+
+  &_active {
+    color: white;
+    border-radius: 50%;
+    background: dodgerblue;
+  }
+}
