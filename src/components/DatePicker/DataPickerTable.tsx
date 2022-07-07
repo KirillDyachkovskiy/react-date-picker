@@ -2,7 +2,7 @@ import { Dispatch, FC, SetStateAction, useMemo } from 'react';
 import WEEKDAYS from '../../constants/weekdays';
 import createMatrix from '../../utils/createMatrix';
 import { getMonthInfo } from '../../utils';
-import { TMonthMatrix, TWeekday } from '../../types';
+import { TMonthMatrix, TMonthStatus, TWeekday } from '../../types';
 import s from './datePicker.module.scss';
 
 interface IDateTable {
@@ -10,15 +10,23 @@ interface IDateTable {
   month: number;
   year: number;
   setDay: Dispatch<SetStateAction<number>>;
+  setPrevMonth: () => void;
+  setNextMonth: () => void;
 }
 
-const DatePickerTable: FC<IDateTable> = ({ day, month, year, setDay }) => {
-  const monthMatrix = useMemo(() => {
+const DatePickerTable: FC<IDateTable> = ({
+  day,
+  month,
+  year,
+  setDay,
+  setPrevMonth,
+  setNextMonth,
+}) => {
+  const monthMatrix = useMemo<TMonthMatrix>(() => {
     const { prevMonthDays, days, firstWeekday } = getMonthInfo(month, year);
 
-    const result: TMonthMatrix = createMatrix(6, 7);
+    const result = createMatrix(6, 7);
     let iterateDay = 1;
-    let isThisMonth = false;
 
     const firstDayId = WEEKDAYS.indexOf(firstWeekday);
 
@@ -28,36 +36,40 @@ const DatePickerTable: FC<IDateTable> = ({ day, month, year, setDay }) => {
           if (dayId < firstDayId) {
             return {
               value: prevMonthDays - firstDayId + dayId + 1,
-              isThisMonth,
+              monthStatus: 'prev',
             };
           }
 
-          isThisMonth = true;
-
           return {
             value: iterateDay++,
-            isThisMonth,
+            monthStatus: 'this',
           };
         });
       }
 
       return week.map(() => {
-        if (iterateDay > days) {
-          iterateDay = 1;
-          isThisMonth = false;
+        if (iterateDay <= days) {
+          return {
+            value: iterateDay++,
+            monthStatus: 'this',
+          };
         }
 
         return {
-          value: iterateDay++,
-          isThisMonth,
+          value: iterateDay++ - days,
+          monthStatus: 'next',
         };
       });
     });
   }, [month, year]);
 
-  const selectNewDay = (newDay: number, isThisMonth: boolean) => () => {
-    if (isThisMonth) {
-      setDay(newDay);
+  const selectNewDay = (newDay: number, monthStatus: TMonthStatus) => () => {
+    setDay(newDay);
+    if (monthStatus === 'prev') {
+      setPrevMonth();
+    }
+    if (monthStatus === 'next') {
+      setNextMonth();
     }
   };
 
@@ -73,15 +85,17 @@ const DatePickerTable: FC<IDateTable> = ({ day, month, year, setDay }) => {
       <tbody>
         {monthMatrix.map((week, weekId: number) => (
           <tr key={weekId}>
-            {week.map(({ value, isThisMonth }, id) => (
+            {week.map(({ value, monthStatus }, id) => (
               <td
                 key={value}
                 className={`${s.month__day} ${
                   id === 5 || id === 6 ? s.month__day_holiday : ''
-                } ${value === day && isThisMonth ? s.month__day_active : ''} ${
-                  isThisMonth ? '' : s.month__day_blur
-                }`}
-                onClick={selectNewDay(value, isThisMonth)}
+                } ${
+                  value === day && monthStatus === 'this'
+                    ? s.month__day_active
+                    : ''
+                } ${monthStatus !== 'this' ? s.month__day_blur : ''}`}
+                onClick={selectNewDay(value, monthStatus)}
               >
                 {value}
               </td>

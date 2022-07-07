@@ -46,7 +46,14 @@ const DatePicker: FC<IDatePicker> = ({ currentDate }) => {
         </div>
       </header>
       <main>
-        <DatePickerTable day={day} month={month} year={year} setDay={setDay} />
+        <DatePickerTable
+          day={day}
+          month={month}
+          year={year}
+          setDay={setDay}
+          setPrevMonth={setPrevMonth}
+          setNextMonth={setNextMonth}
+        />
       </main>
       <p>
         <span>selected day: </span>
